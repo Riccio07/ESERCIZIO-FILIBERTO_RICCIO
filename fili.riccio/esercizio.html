@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Struttura Apprendimento ITIS_FERRARIS</title>
+</head>
+<body>
+    <div class="contenitore">
+        <h1 id="TITOLO">Struttura Apprendimento ITIS_FERRARIS</h1>
+
+
+        <select id="selezionaAmbiente" onchange="mostraAmbienteSelezionato()">
+            <option value="">Seleziona ambiente </option>
+        </select>
+
+       
+        <div>
+            <h2>DATI</h2>
+            <p>Tipo: <span id="tipo"></span></p>
+            <p>Piano: <span id="piano"></span></p>
+        </div>
+    </div>
+
+    <script>
+        fetch('esercizio.json')
+            .then(risposta => risposta.json())
+            .then(dati => {
+                let select = document.getElementById("selezionaAmbiente");
+
+                
+                Object.keys(dati.Centrale).forEach(piano => {
+                    dati.Centrale[piano].forEach(classe => {
+                        let opzione = document.createElement("option");
+                        opzione.value = JSON.stringify({ tipo: "Centrale", piano: piano, classe: classe });
+                        opzione.text = classe.classe;
+                        select.add(opzione);
+                    });
+                });
+
+                Object.keys(dati.Succursale).forEach(piano => {
+                    dati.Succursale[piano].forEach(classe => {
+                        let opzione = document.createElement("option");
+                        opzione.value = JSON.stringify({ tipo: "Succursale", piano: piano, classe: classe });
+                        opzione.text = classe.classe;
+                        select.add(opzione);
+                    });
+                });
+            })
+            .catch(errore => console.error("Errore nel caricamento del JSON:", errore));
+
+        function mostraAmbienteSelezionato() {
+            let valoreSelezionato = document.getElementById("SelezionaAmbiente").value;
+            if (valoreSelezionato) {
+                let ambiente = JSON.parse(valoreSelezionato);
+                mostraDatiAmbiente(ambiente.tipo, ambiente.piano, ambiente.classe);
+            }
+        }
+
+        function mostraDatiAmbiente(tipo, piano, classe) {
+            document.getElementById("tipo").innerHTML = tipo;
+            document.getElementById("piano").innerHTML = piano;
+        }
+    </script>
+</body>
+</html>
